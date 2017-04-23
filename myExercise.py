@@ -69,7 +69,7 @@ def countPartitions(targetSum, largestNumber):
         return 0
     elif(largestNumber <= targetSum):
         if(targetSum - largestNumber > 0):
-             return countPartitions(targetSum, largestNumber - 1) + countPartitions(targetSum - largestNumber, largestNumber)  
+            return countPartitions(targetSum, largestNumber - 1) + countPartitions(targetSum - largestNumber, largestNumber)  
         else:
             return countPartitions(targetSum, largestNumber - 1) + 1
     return countPartitions(targetSum, largestNumber - 1)
@@ -149,3 +149,49 @@ def has_sum(sum, n1, n2):
         return True
     else:
         return has_sum(sum - n1, n1, n2) or has_sum(sum - n2, n1, n2)
+
+"""
+7. Tree
+"""
+def tree(root, branches = []):
+    for branch in branches:
+        assert is_tree(branch)
+    return [root] + list(branches)
+
+def root(tree):
+    return tree[0]
+
+def branches(tree):
+    return tree[1:]
+
+def is_tree(tree):
+    if type(tree) != list or len(tree) < 1:
+         return False
+    for branch in branches(tree):
+        if not is_tree(branch):
+            return False
+    return True
+
+def is_leaf(tree):
+    return not branches(tree)
+
+def fib_tree(n):
+    if n == 0 or n == 1:
+        return tree(n)
+    else:
+        left, right = fib_tree(n - 2), fib_tree(n - 1)
+        fib_n = root(left) +root(right)
+        return tree(fib_n, [left, right])
+
+def count_leaves(tree):
+    if is_leaf(tree):
+        return 1
+    else:
+        counts = [count_leaves(b) for b in branches(tree)]
+        return sum(counts)
+
+def leaves(tree):
+    if is_leaf(tree):
+        return [root(tree)]
+    else:
+        return sum([leaves(b) for b in branches(tree)], [])
