@@ -14,6 +14,16 @@ def find_closest(location, centroids):
     [2, 3]
     """
     "*** YOUR CODE HERE ***"
+    answer = centroids[0]
+    min = pow((location[0] - centroids[0][0]), 2) + pow((location[1] -
+        centroids[0][1]), 2)
+    for places in centroids:
+        distance = pow(location[0] - places[0], 2) + pow(location[1] -
+                places[1], 2)
+        if(distance < min):
+            min = distance
+            answer = places
+    return answer
 
 def group_by_first(pairs):
     """Return a list of pairs that relates each unique key in [key, value]
@@ -41,10 +51,41 @@ def group_by_centroid(restaurants, centroids):
     No empty lists should appear in the result.
     """
     "*** YOUR CODE HERE ***"
+    paired_list = []
+    i = 0
+    for location in restaurants:
+        target_centroid = find_closest(restaurant_location(location), centroids)
+        j = 0
+        for k in centroids:
+            if (k == target_centroid):
+                break
+            j += 1
+        paired_list.append([j, i])
+        i += 1
+    i = 0
+    j = 0
+    final_answer = []
+    while j < len(restaurants):
+        temp = []
+        for elements in paired_list:
+            if elements[0] == i:
+                temp.append(restaurants[elements[1]])
+                j += 1
+        i += 1
+        if(len(temp) > 0):
+            final_answer.append(temp)
+    return final_answer    
 
 def find_centroid(restaurants):
     """Return the centroid of the locations of RESTAURANTS."""
     "*** YOUR CODE HERE ***"
+    x = []
+    y = []
+    for houses in restaurants:
+        x.append(restaurant_location(houses)[0])
+        y.append(restaurant_location(houses)[1])
+    return [mean(x), mean(y)]
+
 
 def k_means(restaurants, k, max_updates=100):
     """Use k-means to group RESTAURANTS by location into K clusters."""

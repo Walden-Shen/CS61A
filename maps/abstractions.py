@@ -57,6 +57,7 @@ def make_restaurant(name, location, categories, price, reviews):
             'location': location,
             'categories': categories,
             'price': price,
+            'reviews': reviews
             }
 
 def restaurant_name(restaurant):
@@ -74,14 +75,20 @@ def restaurant_price(restaurant):
 def restaurant_ratings(restaurant):
     """Return a list of ratings (numbers from 1 to 5)."""
     "*** YOUR CODE HERE ***"
+    temp = []
+    for review in restaurant['reviews']:
+        temp.append(review_rating(review))
+    return temp
 
 ### === +++ RESTAURANT ABSTRACTION BARRIER +++ === ###
 
 def restaurant_num_ratings(restaurant):
     """Return the number of ratings for RESTAURANT."""
     "*** YOUR CODE HERE ***"
+    return len(restaurant['reviews'])
 
 def restaurant_mean_rating(restaurant):
     """Return the average rating for RESTAURANT."""
     "*** YOUR CODE HERE ***"
+    return mean(restaurant_ratings(restaurant))
 
