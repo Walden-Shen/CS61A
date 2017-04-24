@@ -195,3 +195,22 @@ def leaves(tree):
         return [root(tree)]
     else:
         return sum([leaves(b) for b in branches(tree)], [])
+
+def partition_tree(n, m):
+    if n == 0:
+        return tree(True)
+    elif n < 0 or m == 0:
+        return tree(False)
+    else:
+        left = partition_tree(n - m, m)
+        right = partition_tree(n, m - 1)
+        return tree(m, [left, right])
+
+def print_parts(tree, partition = []):
+    if is_leaf(tree):
+        if root(tree):
+            print(partition)
+    else:
+        left, right = branches(tree)
+        print_parts(left, partition + [root(tree)])
+        print_parts(right, partition)
