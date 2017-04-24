@@ -214,3 +214,17 @@ def print_parts(tree, partition = []):
         left, right = branches(tree)
         print_parts(left, partition + [root(tree)])
         print_parts(right, partition)
+
+"""
+8. Function vary in different environment
+"""
+def make_withdraw(balance):
+    def withdraw(amount):
+        nonlocal balance
+        if amount > balance:
+            print('insufficient balance')
+            return
+        balance = balance - amount
+        return balance
+    return withdraw
+
