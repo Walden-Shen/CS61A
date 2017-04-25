@@ -175,6 +175,7 @@ def is_tree(tree):
 def is_leaf(tree):
     return not branches(tree)
 
+#create a fib tree
 def fib_tree(n):
     if n == 0 or n == 1:
         return tree(n)
@@ -190,12 +191,14 @@ def count_leaves(tree):
         counts = [count_leaves(b) for b in branches(tree)]
         return sum(counts)
 
+#present all the leaves of this tree
 def leaves(tree):
     if is_leaf(tree):
         return [root(tree)]
     else:
         return sum([leaves(b) for b in branches(tree)], [])
 
+#part the number n with numbers lower or equal to m
 def partition_tree(n, m):
     if n == 0:
         return tree(True)
@@ -206,6 +209,7 @@ def partition_tree(n, m):
         right = partition_tree(n, m - 1)
         return tree(m, [left, right])
 
+#function with the previous function
 def print_parts(tree, partition = []):
     if is_leaf(tree):
         if root(tree):
@@ -214,6 +218,29 @@ def print_parts(tree, partition = []):
         left, right = branches(tree)
         print_parts(left, partition + [root(tree)])
         print_parts(right, partition)
+
+#square every item in the tree
+def square_tree(tree):
+    temproot = pow(root(tree), 2)
+    if branches(tree):
+        return [temproot] + [square_tree(branch) for branch in branches(tree)]
+    else:
+        return [temproot]
+
+#return the height of a Tree
+def height(tree):
+    if is_leaf(tree):
+        return
+    else:
+        return max([branch + 1 for branch in branches(tree)])
+
+#return the number of nodes
+def tree_size(tree):
+    if is_leaf(tree):
+        return 1
+    else:
+        return 1 + tree_size(branches(tree))
+
 
 """
 8. Function vary in different environment
@@ -228,3 +255,22 @@ def make_withdraw(balance):
         return balance
     return withdraw
 
+"""
+9. OOP 2.25
+"""
+class Account:
+    interest = 0.02 
+    # using Account.interest = n can change all the objects'
+    # interest. Else if you change one object's interest , only its interest is
+    # changed
+    def __init__(self, account_holder):
+        self.balance = 0
+        self.holder = account_holder
+    def deposit(self, amount):
+        self.balance += amount
+        return self.balance
+    def withdraw(self, amount):
+        if amount > self.balance:
+            return 'Insufficient funds'
+        self.balance -= amount
+        return self.balance
