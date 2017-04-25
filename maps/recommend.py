@@ -94,10 +94,14 @@ def k_means(restaurants, k, max_updates=100):
     # Select initial centroids randomly by choosing K different restaurants
     centroids = [restaurant_location(r) for r in sample(restaurants, k)]
 
-    while old_centroids != centroids and n < max_updates:
+    while n < max_updates:
         old_centroids = centroids
         "*** YOUR CODE HERE ***"
-        n += 1
+        clusters = group_by_centroid(restaurants, old_centroids)
+        centroids = []
+        for cluster in clusters:
+            centroids.append(find_centroid(cluster))
+        n = n + 1
     return centroids
 
 def find_predictor(user, restaurants, feature_fn):
@@ -117,7 +121,17 @@ def find_predictor(user, restaurants, feature_fn):
     ys = [reviews_by_user[restaurant_name(r)] for r in restaurants]
 
     "*** YOUR CODE HERE ***"
-    b, a, r_squared = 0, 0, 0  # REPLACE THIS LINE WITH YOUR SOLUTION
+    xmean, ymean = mean(xs), mean(ys)
+    S_xx, S_yy, S_xy = 0, 0, 0
+    for xi in xs:
+        S_xx += pow(xi - xmean, 2)
+    for yi in ys:
+        S_yy += pow(yi - ymean, 2)
+    xys = zip(xs, ys)
+    for xi, yi in xys:
+        S_xy += (xi - xmean) * (yi - ymean)
+    b = S_xy / S_xx
+    a, r_squared = ymean - b * xmean, pow(S_xy, 2) / (S_xx * S_yy)  # REPLACE THIS LINE WITH YOUR SOLUTION
 
     def predictor(restaurant):
         return b * feature_fn(restaurant) + a
@@ -135,6 +149,14 @@ def best_predictor(user, restaurants, feature_fns):
     """
     reviewed = list(user_reviewed_restaurants(user, restaurants).values())
     "*** YOUR CODE HERE ***"
+    best, maxsquare = find_predictor(user, restaurants, feature_fns[0])
+    for feature_fn in feature_fns:
+        temppredictor, tempsquare = find_predictor(user, restaurants,
+                feature_fn)
+        if tempsquare > maxsquare:
+            best = temppredictor
+    return best
+
 
 def rate_all(user, restaurants, feature_functions):
     """Return the predicted ratings of RESTAURANTS by USER using the best
