@@ -239,7 +239,7 @@ def tree_size(tree):
     if is_leaf(tree):
         return 1
     else:
-        return 1 + tree_size([branch] for branch in branches(tree))
+        return 1 + sum([tree_size(branch) for branch in branches(tree)])
 
 #return the max number in the Tree
 def tree_max(tree):
