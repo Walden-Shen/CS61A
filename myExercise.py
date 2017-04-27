@@ -338,3 +338,42 @@ class Account:
             return 'Insufficient funds'
         self.balance -= amount
         return self.balance
+
+class CheckingAccount(Account):
+    """
+    Inheritance
+    """
+    interest = 0.01 #overriding
+    withdraw_fee = 1
+
+    def withdraw(self, amount):
+        return Account.withdraw(self, amount + self.withdraw_fee)
+    #designing for Inheritance
+    #1. dont repeat yourself. using existing implementations. 2.reuse overridden
+    #attributes by accessing through the base class 3. look up attributes on
+    #instances if possible
+
+class BestAccount(CheckingAccount, Account):
+    deposit_fee = 2
+    
+    def __init__(self, account_holder):
+        self.holder = account_holder
+        self.balance = 1
+    
+    def deposit(self, amount):
+        return Account.deposit(self, amount - self.deposit_fee)
+
+class Bank:
+    def __init__(self):
+        self.accounts = [] # composition
+    
+    def open_account(self, holder, amount, account_type = CheckingAccount):
+        account = account_type(holder)
+        account.deposit(amount)
+        self.accounts.append(account)
+        return account
+
+    def pay_interest(self):
+        for account in self.accounts:
+            account.deposit(account.balance * account.interest)
+
