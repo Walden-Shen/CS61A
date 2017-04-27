@@ -94,7 +94,7 @@ def k_means(restaurants, k, max_updates=100):
     # Select initial centroids randomly by choosing K different restaurants
     centroids = [restaurant_location(r) for r in sample(restaurants, k)]
 
-    while n < max_updates:
+    while n < max_updates and old_centroids != centroids:
         old_centroids = centroids
         "*** YOUR CODE HERE ***"
         clusters = group_by_centroid(restaurants, old_centroids)
@@ -149,14 +149,13 @@ def best_predictor(user, restaurants, feature_fns):
     """
     reviewed = list(user_reviewed_restaurants(user, restaurants).values())
     "*** YOUR CODE HERE ***"
-    best, maxsquare = find_predictor(user, restaurants, feature_fns[0])
+    best, maxsquare = find_predictor(user, reviewed, feature_fns[0])
     for feature_fn in feature_fns:
-        temppredictor, tempsquare = find_predictor(user, restaurants,
+        temppredictor, tempsquare = find_predictor(user, reviewed,
                 feature_fn)
         if tempsquare > maxsquare:
             best = temppredictor
     return best
-
 
 def rate_all(user, restaurants, feature_functions):
     """Return the predicted ratings of RESTAURANTS by USER using the best
@@ -168,8 +167,18 @@ def rate_all(user, restaurants, feature_functions):
     """
     # Use the best predictor for the user, learned from *all* restaurants
     # (Note: the name RESTAURANTS is bound to a dictionary of all restaurants)
+    newdict = {}
     predictor = best_predictor(user, RESTAURANTS, feature_functions)
     "*** YOUR CODE HERE ***"
+    reviewed = list(user_reviewed_restaurants(user, restaurants))
+    for restaurant in restaurants:
+        if not restaurant in reviewed:
+            rating = predictor(restaurants[restaurant])
+            newdict[restaurant] = rating
+        else:
+            newdict[restaurant] = user_rating(user, restaurant)
+    return newdict
+
 
 def search(query, restaurants):
     """Return each restaurant in RESTAURANTS that has QUERY as a category.
@@ -179,6 +188,12 @@ def search(query, restaurants):
     restaurants -- A sequence of restaurants
     """
     "*** YOUR CODE HERE ***"
+    answer = []
+    for restaurant in restaurants:
+        if query in restaurant_categories(restaurant):
+            answer.append(restaurant)
+    return answer
+
 
 def feature_set():
     """Return a sequence of feature functions."""
