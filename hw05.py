@@ -187,4 +187,26 @@ class MissManners:
     7
     """
     "*** YOUR CODE HERE ***"
+    def __init__(self, obj):
+        self.container = obj
 
+    def ask(self, *service):
+        sentence = "self.container"
+        for i in range(len(service)):
+            if type(service[i]) == str:
+                temp = service[i] + "please"
+                if temp.index("please") != 0:
+                    print("\'You must learn to say please first.\'")
+                else:
+                    argument = "("
+                    j = i
+                    while i < len(service) - 1 and type(service[i + 1]) == int:
+                        argument += " service[%d]," %(i + 1)
+                        i += 1
+                    argument += ")"
+                    sentence +=  service[j][7:] + argument
+                    try:
+                        return exec(sentence)
+                    except Exception:
+                        print('\'Thanks for asking, but I know not how to ' +
+                                service[j][7:] + '\'')
