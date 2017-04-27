@@ -377,3 +377,38 @@ class Bank:
         for account in self.accounts:
             account.deposit(account.balance * account.interest)
 
+"""
+10. Discussion 5: Mutable data and nonlocal (this section of problems are too
+simple to put on this file, shame)
+"""
+#lst.insert(i, value)  lst.sort()
+
+def reverse_list(lst):
+    """Reverses lst in-place (mutating the original list).
+    >>> lst = [1, 2, 3, 4]
+    >>> reverse_list(lst)
+    >>> lst
+    [4, 3, 2, 1]
+    >>> pi = [3, 1, 4, 1, 5]
+    >>> reverse_list(pi)
+    >>> pi
+    [5, 1, 4, 1, 3]
+    """
+    for i in range(len(lst) // 2):
+        lst[i], lst[len(lst) - i - 1] = lst[len(lst) - i - 1], lst[i]
+
+
+def replace_all_deep(d, x, y):
+    """
+    >>> d = {1: {2: 3, 3: 4}, 2: {4: 4, 5: 3}}
+    >>> replace_all_deep(d, 3, 1)
+    >>> d
+    {1: {2: 1, 3: 4}, 2: {4: 4, 5: 1}}
+    """
+    for key, value in d.items():
+        if type(value) == int:
+            if value == x:
+                d[key] = y
+        else:
+            replace_all_deep(value, x, y)
+
