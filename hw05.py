@@ -190,7 +190,7 @@ class MissManners:
     def __init__(self, obj):
         self.container = obj
 
-    def ask(self, *service):
+    def myask(self, *service):
         sentence = "self.container"
         for i in range(len(service)):
             if type(service[i]) == str:
@@ -210,3 +210,12 @@ class MissManners:
                     except Exception:
                         print('\'Thanks for asking, but I know not how to ' +
                                 service[j][7:] + '\'')
+
+    def ask(self, message, *args):
+        magic_word = 'please '
+        if not message.startswith(magic_word):
+            return 'You must learn to say please first.'
+        attr = message[len(magic_word):]
+        if not hasattr(self.container, attr):
+            return 'Thanks for asking, but I know not how to ' + attr
+        return getattr(self.container, attr)(*args)
