@@ -412,3 +412,105 @@ def replace_all_deep(d, x, y):
         else:
             replace_all_deep(value, x, y)
 
+"""
+11. lecture on 15.3.2
+"""
+#the difference between repr(foo) && str(foo) is that the first one illustrates
+#the python version of foo while the str illustrates humanreadable version. for
+#example : import datetime; today = datetime.date(2020,1,1); repr(today) =
+#'datetime.date(2020,1,1)' while str(today) is '2020-1-1'. Whats more, when you
+#use the eval function to the str(today) && repr(today), you will find that
+#error arises when eval(str(today)) since that's human version
+
+#and the amazing part of str && repr is that they are polymorphic function,
+#which applies to all the functions. Because they dont deal with their argument
+#but to ask the object to call __repr__() or __str__() which are all built in
+#functions of all the objects.
+class Bear:
+    def __init__(self):
+        self.__repr__ = lambda: 'oski'
+        self.__str__ = lambda: 'oski the bear' 
+
+    def __repr__(self):
+        return 'Bear()'
+
+    def __str__(self):
+        return 'a bear'
+
+def print_bear():
+    """
+    >>> print_bear()
+    a bear 
+    a bear 
+    Bear()
+    oski
+    oski the bear 
+    """
+    oski = Bear()
+    print(oski)
+    print(str(oski))
+    print(repr(oski))
+    print(oski.__repr__())
+    print(oski.__str__())
+#the behavior of repr: 1. An instance attribute called __repr__ is ignored
+#the behavior of str: 1. An instance attribute called __str__ is ignored. 2. If
+#no __str__ attribute is found, uses repr string.
+
+def repr(o):
+    return type(o).__repr__(o)
+
+def str(o):
+    if hasattr(type(o), '__str__'):
+        return type(o).__str__(o)
+    else:
+        return repr(o)
+
+#property decorator: designates that it will be called whenever it is looked up
+#on an instance
+class Rational:
+    def __init__(self, n, d):
+        self.numer = n
+        self.denom = d
+    
+    def __repr__(self):
+        return 'Rational({0}, {1})'.format(self.numer, self.denom)
+
+    def __str__(self):
+        return '{0}/{1}'.format(self.numer, self.denom)
+    
+    @property
+    def float_value(self):
+        return self.numer / self.denom
+"""
+12. Complex number system
+"""
+class ComplexRI:
+    def __init__(self, real, imag):
+        self.real = real
+        self.imag = imag
+
+    @property
+    def magnitude(self):
+        return (self.real ** 2 + self.imag ** 2) ** 0.5
+
+    @property
+    def angle(self):
+        return atan2(self.imag, self.real)
+
+class ComplexMA:
+    def __init__(self, magnitude, angle):
+        self.magnitude = magnitude
+        self.angle = angle
+
+    @property
+    def real(self):
+        return self.magnitude * cos(self.angle)
+
+    @property
+    def imag(self):
+        return self.magnitude * sin(self.angle)
+
+    def __repr__(self):
+        return 'ComplexMA({0:g}, {1:g} * pi)'.format(self.magnitude, self.angle
+                / pi)
+
