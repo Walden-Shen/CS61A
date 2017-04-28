@@ -27,6 +27,8 @@ class Place:
         self.entrance = None  # A Place
         # Phase 1: Add an entrance to the exit
         "*** YOUR CODE HERE ***"
+        if self.exit:
+            self.exit.entrance = self
 
     def add_insect(self, insect):
         """Add an Insect to this Place.
@@ -65,6 +67,7 @@ class Place:
 class Insect:
     """An Insect, the base class of Ant and Bee, has armor and a Place."""
 
+    watersafe = False
     is_ant = False
 
     def __init__(self, armor, place=None):
@@ -101,6 +104,7 @@ class Bee(Insect):
     """A Bee moves from place to place, following exits and stinging ants."""
 
     name = 'Bee'
+    watersafe = True
 
     def sting(self, ant):
         """Attack an Ant, reducing the Ant's armor by 1."""
@@ -147,6 +151,7 @@ class HarvesterAnt(Ant):
 
     name = 'Harvester'
     implemented = True
+    food_cost = 2
 
     def action(self, colony):
         """Produce 1 additional food for the colony.
@@ -154,6 +159,7 @@ class HarvesterAnt(Ant):
         colony -- The AntColony, used to access game state information.
         """
         "*** YOUR CODE HERE ***"
+        colony.food += 1
 
 
 def random_or_none(s):
@@ -168,15 +174,26 @@ class ThrowerAnt(Ant):
     name = 'Thrower'
     implemented = True
     damage = 1
+    food_cost = 4
+    min_range = 0
+    max_range = 10
 
-    def nearest_bee(self, hive):
+    def nearest_bee(self, hive, min_range = 0, max_range = 10):
         """Return the nearest Bee in a Place that is not the Hive, connected to
         the ThrowerAnt's Place by following entrances.
 
         This method returns None if there is no such Bee (or none in range).
         """
         "*** YOUR CODE HERE ***"
-        return random_or_none(self.place.bees)
+        location = self.place
+        ranging = 0
+        while not min_range < ranging:
+            location = location.entrance
+            ranging += 1
+        while location.entrance != hive and len(location.bees) == 0 and ranging <= max_range:
+            location = location.entrance
+            ranging += 1
+        return random_or_none(location.bees)
 
     def throw_at(self, target):
         """Throw a leaf at the target Bee, reducing its armor."""
@@ -209,7 +226,6 @@ class Hive(Place):
         exits = [p for p in colony.places.values() if p.entrance is self]
         for bee in self.assault_plan.get(colony.time, []):
             bee.move_to(random.choice(exits))
-
 
 class AntColony:
     """An ant collective that manages global game state and simulates time.
@@ -429,6 +445,10 @@ class Water(Place):
         """Add insect if it is watersafe, otherwise reduce its armor to 0."""
         print('added', insect, insect.watersafe)
         "*** YOUR CODE HERE ***"
+        Place.add_insect(self, insect)
+        if not insect.watersafe:
+            while insect.armor > 0:
+                insect.reduce_armor(1)
 
 
 class FireAnt(Ant):
@@ -436,19 +456,31 @@ class FireAnt(Ant):
 
     name = 'Fire'
     damage = 3
+    food_cost = 6
     "*** YOUR CODE HERE ***"
-    implemented = False
+    implemented = True
 
     def reduce_armor(self, amount):
         "*** YOUR CODE HERE ***"
-
+        self.armor -= amount
+        if self.armor <= 0:
+            print('{0} ran out of armor and expired'.format(self))
+            self.place.remove_insect(self)
+            templst = list(self.place.bees)
+            for i in range(len(templst)):
+                self.place.bees[len(templst) - i - 1].reduce_armor(self.damage)
 
 class LongThrower(ThrowerAnt):
     """A ThrowerAnt that only throws leaves at Bees at least 4 places away."""
 
     name = 'Long'
     "*** YOUR CODE HERE ***"
-    implemented = False
+    implemented = True
+    food_cost = 3
+    min_range = 5
+    max_range = 10
+    def nearest_bee(self, hive, min_range = 5, max_range = 10):
+        return ThrowerAnt.nearest_bee(self, hive, min_range, max_range)
 
 
 class ShortThrower(ThrowerAnt):
@@ -456,7 +488,12 @@ class ShortThrower(ThrowerAnt):
 
     name = 'Short'
     "*** YOUR CODE HERE ***"
-    implemented = False
+    implemented = True
+    food_cost = 3
+    max_range = 3
+    min_range = 0
+    def nearest_bee(self, hive, min_range = 0, max_range = 3):
+        return ThrowerAnt.nearest_bee(self, hive, min_range, max_range)
 
 
 "*** YOUR CODE HERE ***"
