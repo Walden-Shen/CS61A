@@ -467,10 +467,19 @@ def str(o):
 
 #property decorator: designates that it will be called whenever it is looked up
 #on an instance
-class Rational:
+class Number:
+    def __add__(self, other):
+        return self.add(other)
+
+    def __mul__(self, other):
+        return self.mul(other)
+
+class Rational(Number):
+    type_tag = "rat"
     def __init__(self, n, d):
-        self.numer = n
-        self.denom = d
+        g = gcd(n, d)
+        self.numer = n // g
+        self.denom = d // g
     
     def __repr__(self):
         return 'Rational({0}, {1})'.format(self.numer, self.denom)
@@ -484,7 +493,22 @@ class Rational:
 """
 12. Complex number system
 """
-class ComplexRI:
+from math import *
+class Number:
+    def __add__(self, other):
+        return self.add(other)
+
+    def __mul__(self, other):
+        return self.mul(other)
+
+class Complex(Number):
+    type_tag = "com"
+    def add(self, other):
+        return ComplexRI(self.real + other.real, self.imag + other.imag)
+
+    def mul(self, other):
+        return ComplexMA(self.magnitude * other.magnitude, self.angle + other.angle)
+class ComplexRI(Complex):
     def __init__(self, real, imag):
         self.real = real
         self.imag = imag
@@ -496,8 +520,11 @@ class ComplexRI:
     @property
     def angle(self):
         return atan2(self.imag, self.real)
+    
+    def __repr__(self):
+        return 'ComplexRI({0:g}, {1:g})'.format(self.real, self.imag)
 
-class ComplexMA:
+class ComplexMA(Complex):
     def __init__(self, magnitude, angle):
         self.magnitude = magnitude
         self.angle = angle
