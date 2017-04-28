@@ -69,6 +69,7 @@ class Insect:
 
     watersafe = False
     is_ant = False
+    blocks_path = True
 
     def __init__(self, armor, place=None):
         """Create an Insect with an armor amount and a starting Place."""
@@ -119,7 +120,10 @@ class Bee(Insect):
         """Return True if this Bee cannot advance to the next Place."""
         # Phase 3: Special handling for NinjaAnt
         "*** YOUR CODE HERE ***"
-        return self.place.ant is not None
+        if self.place.ant and self.place.ant.blocks_path:
+            return True
+        else:
+            return False
 
     def action(self, colony):
         """A Bee's action stings the Ant that blocks its exit if it is blocked,
@@ -187,10 +191,10 @@ class ThrowerAnt(Ant):
         "*** YOUR CODE HERE ***"
         location = self.place
         ranging = 0
-        while not min_range < ranging:
+        while not min_range <= ranging:
             location = location.entrance
             ranging += 1
-        while location.entrance != hive and len(location.bees) == 0 and ranging <= max_range:
+        while location.entrance != hive and len(location.bees) == 0 and ranging < max_range:
             location = location.entrance
             ranging += 1
         return random_or_none(location.bees)
@@ -477,10 +481,10 @@ class LongThrower(ThrowerAnt):
     "*** YOUR CODE HERE ***"
     implemented = True
     food_cost = 3
-    min_range = 5
+    min_range = 4 
     max_range = 10
-    def nearest_bee(self, hive, min_range = 5, max_range = 10):
-        return ThrowerAnt.nearest_bee(self, hive, min_range, max_range)
+    def nearest_bee(self, hive, mi = min_range, ma = max_range):
+        return ThrowerAnt.nearest_bee(self, hive, mi, ma)
 
 
 class ShortThrower(ThrowerAnt):
@@ -490,14 +494,21 @@ class ShortThrower(ThrowerAnt):
     "*** YOUR CODE HERE ***"
     implemented = True
     food_cost = 3
-    max_range = 3
+    max_range = 2
     min_range = 0
-    def nearest_bee(self, hive, min_range = 0, max_range = 3):
-        return ThrowerAnt.nearest_bee(self, hive, min_range, max_range)
+    def nearest_bee(self, hive, mi = min_range, ma = max_range):
+        return ThrowerAnt.nearest_bee(self, hive, mi, ma)
 
 
 "*** YOUR CODE HERE ***"
 # The WallAnt class
+class WallAnt(Ant):
+    name = 'WallAnt'
+    implemented = True
+    food_cost = 4
+    def __init__(self, armor = 4, place = None):
+        self.armor = armor
+        self.place = place
 
 
 class NinjaAnt(Ant):
@@ -506,10 +517,15 @@ class NinjaAnt(Ant):
     name = 'Ninja'
     damage = 1
     "*** YOUR CODE HERE ***"
-    implemented = False
+    implemented = True
+    blocks_path = False
+    food_cost = 6
 
     def action(self, colony):
         "*** YOUR CODE HERE ***"
+        templst = list(self.place.bees)
+        for i in range(len(templst)):
+            self.place.bees[len(templst) - i - 1].reduce_armor(self.damage)
 
 
 "*** YOUR CODE HERE ***"
