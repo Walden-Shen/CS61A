@@ -23,9 +23,11 @@ class Person(object):
     def __init__(self, name):
         self.name = name
         "*** YOUR CODE HERE ***"
+        self.stuff = 'I squirreled it away before it could catch on fire.'
 
     def say(self, stuff):
         "*** YOUR CODE HERE ***"
+        self.stuff = stuff
         return stuff
 
     def ask(self, stuff):
@@ -36,6 +38,7 @@ class Person(object):
 
     def repeat(self):
         "*** YOUR CODE HERE ***"
+        return self.stuff
 
 # Q3
 class Account(object):
@@ -58,6 +61,7 @@ class Account(object):
         self.balance = 0
         self.holder = account_holder
         "*** YOUR CODE HERE ***"
+        self.transactions = []
 
     def deposit(self, amount):
         """Increase the account balance by amount and return the
@@ -65,6 +69,7 @@ class Account(object):
         """
         "*** YOUR CODE HERE ***"
         self.balance = self.balance + amount
+        self.transactions.append(('deposit', amount))
         return self.balance
 
     def withdraw(self, amount):
@@ -75,6 +80,7 @@ class Account(object):
         if amount > self.balance:
             return 'Insufficient funds'
         self.balance = self.balance - amount
+        self.transactions.append(('withdraw', amount))
         return self.balance
 
 # Q4
@@ -105,8 +111,17 @@ class BadBankAccount(Account):
         new balance.
         """
         "*** YOUR CODE HERE ***"
-        self.balance = self.balance - amount
-        return self.balance
+        if self.balance > 0:
+            self.balance = self.balance - amount
+            return self.balance
+        else:
+            print('You have overdrawn, please add more money!\n{0}'.format(self.balance))
 
     "*** YOUR CODE HERE ***"
+    @property
+    def overdrawn(self):
+        if self.balance >= 0:
+            return False
+        else:
+            return True
 
