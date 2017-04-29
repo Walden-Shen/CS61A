@@ -466,13 +466,29 @@ def str(o):
         return repr(o)
 
 #property decorator: designates that it will be called whenever it is looked up
-#on an instance
+#on an instance. It unifies the representation of different forms
+from math import *
 class Number:
     def __add__(self, other):
-        return self.add(other)
+        if self.type_tag == other.type_tag:
+            return self.add(other)
+        elif (self.type_tag, other.type_tag) in self.adders:
+            return self.cross_apply(other, self.adders)
+    
+    def cross_apply(self, other, cross_fns):
+        cross_fn = cross_fns[(self.type_tag, other.type_tag)]
+        return cross_fn(self, other)
 
     def __mul__(self, other):
         return self.mul(other)
+
+    def add_complex_and_rational(c, r):
+        return ComplexRI(c.real + r.numer / r.denom, c.imag)
+
+    def add_rational_and_complex(c, r):
+        return ComplexRI(c.numer / c.denom + r.real, r.imag)
+    
+    adders = {("com", "rat"): add_complex_and_rational, ("rat", "com"): add_rational_and_complex}
 
 class Rational(Number):
     type_tag = "rat"
@@ -490,17 +506,19 @@ class Rational(Number):
     @property
     def float_value(self):
         return self.numer / self.denom
+
+    def add(self, other):
+        nx, dx = self.numer, self.denom
+        ny, dy = other.numer, other.denom
+        return Rational(nx * dy + ny * dx, dx * dy)
+    
+    def mul(self, other):
+        numer = self.numer * other.numer
+        denom = self.denom * other.denom
+        return Rational(numer, denom)
 """
 12. Complex number system
 """
-from math import *
-class Number:
-    def __add__(self, other):
-        return self.add(other)
-
-    def __mul__(self, other):
-        return self.mul(other)
-
 class Complex(Number):
     type_tag = "com"
     def add(self, other):
