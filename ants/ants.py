@@ -452,7 +452,7 @@ class Water(Place):
         Place.add_insect(self, insect)
         if not insect.watersafe:
             while insect.armor > 0:
-                insect.reduce_armor(1)
+                insect.reduce_armor(insect.armor)
 
 
 class FireAnt(Ant):
@@ -469,10 +469,10 @@ class FireAnt(Ant):
         self.armor -= amount
         if self.armor <= 0:
             print('{0} ran out of armor and expired'.format(self))
-            self.place.remove_insect(self)
             templst = list(self.place.bees)
             for i in range(len(templst)):
                 self.place.bees[len(templst) - i - 1].reduce_armor(self.damage)
+            self.place.remove_insect(self)
 
 class LongThrower(ThrowerAnt):
     """A ThrowerAnt that only throws leaves at Bees at least 4 places away."""
@@ -503,7 +503,7 @@ class ShortThrower(ThrowerAnt):
 "*** YOUR CODE HERE ***"
 # The WallAnt class
 class WallAnt(Ant):
-    name = 'WallAnt'
+    name = 'Wall'
     implemented = True
     food_cost = 4
     def __init__(self, armor = 4, place = None):
@@ -530,7 +530,11 @@ class NinjaAnt(Ant):
 
 "*** YOUR CODE HERE ***"
 # The ScubaThrower class
-
+class ScubaThrower(ThrowerAnt):
+    name = 'Scuba'
+    implemented = True
+    food_cost = 5
+    watersafe = True
 
 class HungryAnt(Ant):
     """HungryAnt will take three turns to digest a Bee in its place.
@@ -538,25 +542,35 @@ class HungryAnt(Ant):
     """
     name = 'Hungry'
     "*** YOUR CODE HERE ***"
-    implemented = False
+    implemented = True
+    food_cost = 4
 
     def __init__(self):
         Ant.__init__(self)
         "*** YOUR CODE HERE ***"
+        self.time_to_digest = 3
+        self.digesting = 0
 
     def eat_bee(self, bee):
         "*** YOUR CODE HERE ***"
+        bee.reduce_armor(bee.armor)
 
     def action(self, colony):
         "*** YOUR CODE HERE ***"
-
+        if self.digesting > 0:
+            self.digesting -= 1
+        elif self.place.bees:
+            self.digesting = self.time_to_digest
+            bee = random_or_none(self.place.bees)
+            return self.eat_bee(bee)
 
 class BodyguardAnt(Ant):
     """BodyguardAnt provides protection to other Ants."""
     name = 'Bodyguard'
     "*** YOUR CODE HERE ***"
-    implemented = False
-
+    implemented = True
+    food_cost = 4
+    
     def __init__(self):
         Ant.__init__(self, 2)
         self.ant = None  # The Ant hidden in this bodyguard
