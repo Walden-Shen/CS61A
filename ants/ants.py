@@ -42,8 +42,20 @@ class Place:
         if insect.is_ant:
             # Phase 4: Special handling for BodyguardAnt
             "*** YOUR CODE HERE ***"
-            assert self.ant is None, 'Two ants in {0}'.format(self)
-            self.ant = insect
+            if self.ant:
+                if self.ant.container and self.ant.can_contain(insect):
+                    self.ant.contain_ant(insect)
+                    insect.place = self
+                    return
+                elif insect.container and insect.can_contain(self.ant):
+                    insect.contain_ant(self.ant)
+                    self.ant = insect
+                    insect.place = self
+                    return
+                assert self.ant is None, 'Two ants in {0}'.format(self)
+            else:
+                assert self.ant is None, 'Two ants in {0}'.format(self)
+                self.ant = insect
         else:
             self.bees.append(insect)
         insect.place = self
@@ -54,7 +66,10 @@ class Place:
             assert self.ant == insect, '{0} is not in {1}'.format(insect, self)
             # Phase 4: Special handling for BodyguardAnt and QueenAnt
             "*** YOUR CODE HERE ***"
-            self.ant = None
+            if insect.container and insect.ant:
+                self.ant = insect.ant
+            else:
+                self.ant = None
         else:
             self.bees.remove(insect)
 
@@ -144,10 +159,17 @@ class Ant(Insect):
     implemented = False  # Only implemented Ant classes should be instantiated
     damage = 0
     food_cost = 0
+    container = False
 
     def __init__(self, armor=1):
         """Create an Ant with an armor quantity."""
         Insect.__init__(self, armor)
+
+    def can_contain(self, other):
+        if self.container and self.ant == None and not other.container:
+            return True
+        else:
+            return False
 
 
 class HarvesterAnt(Ant):
@@ -570,16 +592,20 @@ class BodyguardAnt(Ant):
     "*** YOUR CODE HERE ***"
     implemented = True
     food_cost = 4
-    
+    container = True
+
     def __init__(self):
         Ant.__init__(self, 2)
         self.ant = None  # The Ant hidden in this bodyguard
 
     def contain_ant(self, ant):
         "*** YOUR CODE HERE ***"
+        self.ant = ant
 
     def action(self, colony):
         "*** YOUR CODE HERE ***"
+        if self.ant:
+            return self.ant.action(colony)
 
 class LaserAnt(ThrowerAnt):
     """
@@ -589,7 +615,40 @@ class LaserAnt(ThrowerAnt):
     distance_weakening = 0.3
     insects_shot_weakening = 0.5
     "*** YOUR CODE HERE ***"
-    implemented = False
+    implemented = True
+    food_cost = 10
+    damage = 1.75
+
+    def nearest_bee(self, hive, min_range = 0, max_range = 10):
+        """Return the nearest Bee in a Place that is not the Hive, connected to
+        the ThrowerAnt's Place by following entrances.
+
+        This method returns None if there is no such Bee (or none in range).
+        """
+        "*** YOUR CODE HERE ***"
+        location = self.place
+        distance, numofdamaged = 0, 0
+        dic = {}
+        while location.entrance != hive:
+            location, distance = location.entrance, distance + 1
+            if location.bees:
+                for bee in location.bees:
+                    dic[bee] = self.damage - self.distance_weakening * distance - numofdamaged * self.insects_shot_weakening
+                    if dic[bee] < 0:
+                        dic[bee] = 0
+                    numofdamaged += 1
+            if location.ant:
+                dic[location.ant] = self.damage - self.distance_weakening * distance - numofdamaged * self.insects_shot_weakening
+                if dic[location.ant] < 0:
+                    dic[location.ant] = 0
+                numofdamaged += 1
+        return dic
+
+    def throw_at(self, target):
+        """Throw a leaf at the target Bee, reducing its armor."""
+        if target is not None:
+            for key, value in target.items():
+                key.reduce_armor(value)
 
 class QueenPlace:
     """A place that represents both places in which the bees find the queen.
@@ -605,7 +664,7 @@ class QueenPlace:
         "*** YOUR CODE HERE ***"
 
 
-class QueenAnt:  # You should change this line
+class QueenAnt(ScubaThrower):  # You should change this line
     """The Queen of the colony.  The game is over if a bee enters her place."""
 
     name = 'Queen'
