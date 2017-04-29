@@ -25,11 +25,33 @@ def make_change(amount, coins):
     >>> make_change(25, coins)
     [2, 2, 4, 4, 5, 8]
     """
+    global answer
     if not coins:
         return None
     smallest = min(coins)
-    rest = remove_one(coins, smallest)
+#    rest = remove_one(coins, smallest)
     "*** YOUR CODE HERE ***"
+    if amount == 0:
+        answer = []
+        return True 
+    elif amount == smallest:
+        answer = [smallest]
+        return answer
+    elif amount < smallest:
+        return None
+    tempcoinstype = []
+#    for key in rest:
+    for key in coins:
+        tempcoinstype.append(key)
+    for i in range(len(tempcoinstype)):
+        tempcoinsdict = {}
+        for j in range(i, len(tempcoinstype)):
+            tempcoinsdict[tempcoinstype[j]] = coins[tempcoinstype[j]]
+        tempdict = remove_one(tempcoinsdict, tempcoinstype[i])
+        if make_change(amount - tempcoinstype[i], tempdict):
+            answer = [tempcoinstype[i]] + answer
+            return answer
+
 
 def remove_one(coins, coin):
     """Remove one coin from a dictionary of coins. Return a new dictionary,
