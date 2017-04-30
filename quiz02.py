@@ -25,6 +25,7 @@ def make_change(amount, coins):
     >>> make_change(25, coins)
     [2, 2, 4, 4, 5, 8]
     """
+    """
     global answer
     if not coins:
         return None
@@ -51,6 +52,34 @@ def make_change(amount, coins):
         if make_change(amount - tempcoinstype[i], tempdict):
             answer = [tempcoinstype[i]] + answer
             return answer
+    """
+    global answer
+    if not coins:
+        return None
+    smallest = min(coins)
+    rest = remove_one(coins, smallest)
+    if amount == 0:
+        answer = []
+        return True 
+    elif amount == smallest:
+        answer = [smallest]
+        return answer
+    elif amount < smallest:
+        return None
+    cointypes = []
+    for key in coins:
+        cointypes.append(key)
+    cointypes.sort()
+    if make_change(amount - smallest, coins):
+        answer = [smallest] + answer
+        return answer
+    for cointype in cointypes:
+        del coins[smallest]
+        smallest = min(coins)
+        if make_change(amount - smallest, coins):
+            answer = [smallest] + answer
+            return answer
+        
 
 
 def remove_one(coins, coin):
@@ -147,4 +176,16 @@ class ChangeMachine:
     def change(self, coin):
         """Return change for coin, removing the result from self.coins."""
         "*** YOUR CODE HERE ***"
+        if self.coins[coin] > 0:
+            self.coins[coin] += 1
+        else:
+            self.coins[coin] = 1
+        changes = make_change(coin, self.coins)
+        for change in changes:
+            if self.coins[coin] == 1:
+                del self.coins[coin]
+            else:
+                self.coins[coin] -= 1
+        return changes
+
 
