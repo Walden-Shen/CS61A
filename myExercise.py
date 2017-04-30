@@ -642,6 +642,3 @@ class Link:
         else:
             return str(s.first) + separator + join_link(s.rest, separator)
 
-
-
-
