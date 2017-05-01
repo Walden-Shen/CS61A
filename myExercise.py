@@ -612,35 +612,35 @@ class Link:
             rest_str = ''
         return 'Link({0}{1})'.format(self.first, rest_str)
 
-    def extend_link(s, t):
-        if s is Link.empty:
-            return t
-        else:
-            return Link(s.first, extend_link(s.rest, t))
+def extend_link(s, t):
+    if s is Link.empty:
+        return t
+    else:
+        return Link(s.first, extend_link(s.rest, t))
 
-    def map_link(f, s):
-        if s is Link.empty:
-            return s
-        else:
-            return Link(f(s.first), map_link(f, s.rest))
+def map_link(f, s):
+    if s is Link.empty:
+        return s
+    else:
+        return Link(f(s.first), map_link(f, s.rest))
 
-    def filter_link(f, s):
-        if s is Link.empty:
-            return s
-        else:
-            filtered = filter_link(f, s.rest)
+def filter_link(f, s):
+    if s is Link.empty:
+        return s
+    else:
+        filtered = filter_link(f, s.rest)
             if f(s.first):
                 return Link(s.first, filtered)
             else:
                 return filtered
 
-    def join_link(s, separator):
-        if s is Link.empty:
-            return ""
-        elif s.rest is Link.empty:
-            return str(s.first)
-        else:
-            return str(s.first) + separator + join_link(s.rest, separator)
+def join_link(s, separator):
+    if s is Link.empty:
+        return ""
+    elif s.rest is Link.empty:
+        return str(s.first)
+    else:
+        return str(s.first) + separator + join_link(s.rest, separator)
 """
 13.memoized
 """
@@ -690,3 +690,15 @@ def fib_treeclass(n):
     else:
         left, right = fib_treeclass(n - 2), fib_treeclass(n - 1)
         return Tree(left.entry + right.entry, [left, right])
+
+#a function helps me to figure out how many frames exist
+def count_frames(f):
+    def counted(n):
+        counted.open_count += 1
+        if counted.max_count < counted.open_count:
+            counted.max_count = counted.open_count
+        result = f(n)
+        return result
+    counted.open_count = 0
+    counted.max_count = 0
+    return counted
