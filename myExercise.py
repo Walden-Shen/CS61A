@@ -181,7 +181,7 @@ def fib_tree(n):
         return tree(n)
     else:
         left, right = fib_tree(n - 2), fib_tree(n - 1)
-        fib_n = root(left) +root(right)
+        fib_n = root(left) + root(right)
         return tree(fib_n, [left, right])
 
 def count_leaves(tree):
@@ -641,4 +641,52 @@ class Link:
             return str(s.first)
         else:
             return str(s.first) + separator + join_link(s.rest, separator)
+"""
+13.memoized
+"""
+def fib(n):
+    if n == 0 or n == 1:
+        return n
+    else:
+        return fib(n - 2) + fib(n - 1)
 
+def count(f):
+    def counted(*args):
+        counted.call_count += 1
+        return f(*args)
+    counted.call_count = 0
+    return counted
+#I make a lot of effort to figure this memo why it is recursive: cuz when you
+#call fib = memo(fib), the reference to f is also changed. Then it is recursive
+def memo(f):
+    cache = {}
+    def memoized(*args):
+        if args not in cache:
+            cache[args] = f(*args)#*args break the tuple args into many arguments
+            print(cache[args])
+        return cache[args]#args is a tuple
+    return memoized
+
+"""
+14.Tree Class
+"""
+class Tree:
+    def __init__(self, entry, branches = ()):
+        self.entry = entry
+        for branch in branches:
+            assert isinstance(branch, Tree) #inherit from Tree is also ok
+        self.branches = list(branches)
+
+    def __repr__(self):
+        if self.branches:
+            branches_repr = ", " + repr(self.branches)
+        else:
+            branches_repr = ""
+        return "Tree({0}{1})".format(self.entry, branches_repr)
+@memo
+def fib_treeclass(n):
+    if n == 0 or n == 1:
+        return Tree(n)
+    else:
+        left, right = fib_treeclass(n - 2), fib_treeclass(n - 1)
+        return Tree(left.entry + right.entry, [left, right])
