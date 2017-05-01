@@ -54,31 +54,23 @@ def make_change(amount, coins):
             return answer
     """
     global answer
+    if amount == 0:
+        answer = []
+        return True
     if not coins:
         return None
     smallest = min(coins)
-    rest = remove_one(coins, smallest)
-    if amount == 0:
-        answer = []
-        return True 
-    elif amount == smallest:
-        answer = [smallest]
-        return answer
-    elif amount < smallest:
+    if amount < smallest:
         return None
-    cointypes = []
-    for key in coins:
-        cointypes.append(key)
-    cointypes.sort()
-    if make_change(amount - smallest, coins):
-        answer = [smallest] + answer
-        return answer
-    for cointype in cointypes:
-        del coins[smallest]
-        smallest = min(coins)
+    while coins:
+        coins = remove_one(coins, smallest)
         if make_change(amount - smallest, coins):
             answer = [smallest] + answer
             return answer
+        if smallest in coins:
+            del coins[smallest]
+        if len(coins) > 0:
+            smallest = min(coins)
         
 
 
