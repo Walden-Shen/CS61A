@@ -66,17 +66,16 @@ def reverse(s):
     Link(3, Link(5, Link(4, Link(6))))
     """
     "*** YOUR CODE HERE ***"
+    answer = Link(s.first)
+    return ancillary(s, answer)
+
+def ancillary(s, answer):
     if s.rest:
-        return Link(reverse(s.rest), Link(s.first))
+        s = s.rest
+        answer = Link(s.first, answer)
+        return ancillary(s,answer)
     else:
-        return s.first
-    global answer
-    if s.rest:
-        newHead = reverse(s.rest)
-        s.rest.rest = s
-        s.rest = None
-    else:
-        return s
+        return answer
 
 def has_cycle(s):
     """Return whether Link s contains a cycle.
@@ -155,7 +154,18 @@ class Mobile:
             return self.left.torque == self.right.torque
         elif type(self.left.contents) is Mobile and type(self.right.contents) is Weight:
             if self.left.contents.is_balanced():
-                return 
+                return self.left.torque == self.right.torque
+            return False
+        elif type(self.left.contents) is Weight and type(self.right.contents) is Mobile:
+            if self.right.contents.is_balanced():
+                return self.left.torque == self.right.torque
+            return False
+        else:
+            if self.right.contents.is_balanced() and self.left.contents.is_balanced():
+                return self.left.torque == self.right.torque
+            return False
+        return False
+                
     """
         if type(self.left.contents) is Weight and type(self.right.contents) is Weight:
             if self.left.contents.weight == self.right.contents.weight:
