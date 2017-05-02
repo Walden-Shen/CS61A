@@ -44,7 +44,6 @@ def ancillaryInverseCascade(n, length):
         ancillaryInverseCascade(n, length - 1)
     else:
         return
-    print(n // pow(10, length - 1))
 
 "teacher's version"
 def inverse_Cascade(n):
@@ -59,6 +58,7 @@ def f_then_g(f, g, n):
 
 grow = lambda n: f_then_g(grow, print, n//10)
 shrink = lambda n : f_then_g(print, shrink, n//10)
+
 
 """
 4.a new recursion exercise : my version
@@ -221,7 +221,7 @@ def print_parts(tree, partition = []):
 
 #square every item in the tree
 def square_tree(tree):
-    temproot = pow(root(tree), 2)
+    temproot = (int)(pow(root(tree), 2))
     if branches(tree):
         return [temproot] + [square_tree(branch) for branch in branches(tree)]
     else:
@@ -306,6 +306,7 @@ def find_path(tree, x):
             if find_path(branch, x):
                 temp = [root(branch)] + temp
                 return [root(tree)] + temp
+
 """
 8. Function vary in different environment
 """
@@ -315,7 +316,7 @@ def make_withdraw(balance):
         if amount > balance:
             print('insufficient balance')
             return
-        balance = balance - amount
+        balance -= amount
         return balance
     return withdraw
 
@@ -479,6 +480,7 @@ class Number:
         elif (self.type_tag, other.type_tag) in self.adders:
             return self.cross_apply(other, self.adders)
     """
+
 #you can also coerce the rational to ComplexRI cuz rational is a ComplexRI
 #without imaginary
     def __add__(self, other):
@@ -629,10 +631,10 @@ def filter_link(f, s):
         return s
     else:
         filtered = filter_link(f, s.rest)
-            if f(s.first):
-                return Link(s.first, filtered)
-            else:
-                return filtered
+        if f(s.first):
+            return Link(s.first, filtered)
+        else:
+            return filtered
 
 def join_link(s, separator):
     if s is Link.empty:
@@ -702,3 +704,25 @@ def count_frames(f):
     counted.open_count = 0
     counted.max_count = 0
     return counted
+
+def make_even(t):
+    """
+    >>> t = Tree(1, [Tree(2, [Tree(3)]), Tree(4), Tree(5)])
+    >>> make_even(t)
+    >>> t # Assuming __repr__ is defined
+    Tree(2, [Tree(2, [Tree(4)]), Tree(4), Tree(6)])
+    """
+    if t.entry % 2:
+        t.entry = t.entry + 1
+    for branch in t.branches:
+        make_even(branch)
+
+def average_tree(t):
+    """
+    >>> t = Tree(1, [Tree(2, [Tree(3)]), Tree(4), Tree(5)])
+    >>> average_tree(t)
+    3
+    """
+    total = 
+
+    
