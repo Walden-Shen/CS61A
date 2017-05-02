@@ -50,6 +50,24 @@ def insert(link, value, index):
     Index out of bounds!
     """
     "*** YOUR CODE HERE ***"
+    while index > 0:
+        index -= 1
+        if link.rest != Link.empty:
+            link = link.rest
+        else:
+            print('Index out of bounds!')
+            return
+    link.rest = Link(link.first, link.rest)
+    link.first = value
+    """
+    while index > 0 and link.rest is not Link.empty:
+        link = link.rest
+        index -= 1
+    if index == 0:
+        link = Link(value, link)
+    else:
+        print('Index out of bounds!')
+    """
 
 # Trees
 
@@ -79,4 +97,7 @@ def square_tree(t):
     Tree(1, [Tree(9, [Tree(25)]), Tree(49)])
     """
     "*** YOUR CODE HERE ***"
+    t.entry = t.entry ** 2
+    for branch in t.branches:
+        square_tree(branch)
 
