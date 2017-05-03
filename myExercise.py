@@ -723,6 +723,3 @@ def average_tree(t):
     >>> average_tree(t)
     3
     """
-    total = 
-
-    
