@@ -2,35 +2,39 @@
   (cdr (cdr s)))
 
 (define (cadr s)
-  ; YOUR-CODE-HERE
-  nil
+ (if (or (null? s) (null? (cdr s)))
+  	nil
+	(car (cdr s)))
 )
 
 (define (caddr s)
-  ; YOUR-CODE-HERE
-  nil
+ (if (or (null? s) (null? (cdr s)) (null? (cddr s)))
+  	nil
+	(car (cddr s)))
 )
 
 (define (sign x)
-  ; YOUR-CODE-HERE
-  nil
+ (cond ((< x 0) -1)
+  		((= x 0) 0)
+		(else 1))
 )
 
 (define (square x) (* x x))
 
 (define (pow b n)
-  ; YOUR-CODE-HERE
-  nil
+ (cond  ((= 1 n) b)
+		((even? n) (pow (square b) (/ n 2)))
+		((odd? n) (* b (pow b (- n 1)))))
 )
 
 (define (ordered? s)
-  ; YOUR-CODE-HERE
-  nil
+ (cond  ((or (null? s) (null? (cdr s))) #t)
+  		((>= (car (cdr s)) (car s)) (and #t (ordered? (cdr s))))
+		(else #f))
 )
 
 (define (nodots s)
-  ; YOUR-CODE-HERE
-  nil
+
 )
 
 ; Sets as sorted lists
