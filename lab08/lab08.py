@@ -102,6 +102,13 @@ def extra_elem(a,b):
     6
     """
     "*** YOUR CODE HERE ***"
+    for s in b:
+        if s not in a:
+            return s
+    #teacher's version
+    """
+    return lst(set(b) - set(a))[0]
+    """
 
 def find_duplicates(lst):
     """Returns True if lst has any duplicates and False if it does not.
@@ -112,5 +119,5 @@ def find_duplicates(lst):
     True
     """
     "*** YOUR CODE HERE ***"
-
-
+    b = set(lst)
+    return not len(b) == len(lst)
