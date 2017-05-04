@@ -34,7 +34,10 @@
 )
 
 (define (nodots s)
-
+ (cond ((null? s) s)
+  		((and (pair? (car s)) (number? (cdr s))) (cons (nodots (car s)) (cons (cdr s) nil)))
+		((number? (cdr s)) (cons (car s) (cons (cdr s) nil)))
+		((pair? (car s)) (cons (nodots (car s)))))
 )
 
 ; Sets as sorted lists
@@ -42,9 +45,9 @@
 (define (empty? s) (null? s))
 
 (define (contains? s v)
-    (cond ((empty? s) false)
-          ; YOUR-CODE-HERE
-          (else nil)
+    (cond ((or (empty? s) (> (car s) v)) #f)
+	 		((= (car s) v) #t)
+          (else (contains? (cdr s) v))
           ))
 
 ; Equivalent Python code, for your reference:
@@ -64,14 +67,17 @@
 
 (define (add s v)
     (cond ((empty? s) (list v))
-          ; YOUR-CODE-HERE
-          (else nil)
-          ))
+	 	((contains? s v) s)
+		((> (car s) v) (cons v s))
+          ((and (not (empty? (cdr s))) (<= (car s) v) (>= (cadr s) v)) (cons (car s) (cons v (cdr s))))
+		  (else (cons (car s) (add (cdr s) v)))
+		))
 
 (define (intersect s t)
     (cond ((or (empty? s) (empty? t)) nil)
-          ; YOUR-CODE-HERE
-          (else nil)
+          ((= (car s) (car t)) (cons (car s) (intersect (cdr s) (cdr t))))
+		  ((< (car s) (car t)) (intersect (cdr s) t))
+			(else (intersect s (cdr t)))
           ))
 
 ; Equivalent Python code, for your reference:
@@ -91,8 +97,9 @@
 (define (union s t)
     (cond ((empty? s) t)
           ((empty? t) s)
-          ; YOUR-CODE-HERE
-          (else nil)
+		  ((= (car s) (car t)) (cons (car s) (union (cdr s) (cdr t))))
+		  ((> (car s) (car t)) (cons (car t) (union s (cdr t))))
+          (else (cons (car s) (union (cdr s) t)))
           ))
 
 
@@ -108,8 +115,9 @@
 
 (define (in? t v)
     (cond ((empty? t) false)
-          ; YOUR-CODE-HERE
-          (else nil)
+	 		((= v (entry t)) #t)
+			((< v (entry t)) (in? (left t) v))
+          (else (in? (right t) v))
           ))
 
 ; Equivalent Python code, for your reference:
@@ -125,7 +133,9 @@
 ;         return contains(s.left, v)
 
 (define (as-list t)
-    ; YOUR-CODE-HERE
-    (else nil)
-    )
-
+ 	(if (and (empty? (left t)) (empty? (right t)))
+	 	(entry t)
+ 	(if (not (empty? (t)))
+	 	(cons (as-list (left t)) (cons (entry t) (cons (as-list (right t)))))
+	))
+	)
