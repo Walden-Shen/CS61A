@@ -9,19 +9,15 @@ test = {
   'suites': [
     [
       {
-        'locked': True,
         'test': r"""
         >>> global_frame = create_global_frame()
         >>> global_frame.define("x", 3)
         >>> global_frame.parent   # parent of the global frame
-        1d6597b6524ad591af6e2f47e176b869
-        # locked
+        None
         >>> global_frame.lookup("x")
-        0c31fd9672da616fabf24f1c95cc313f
-        # locked
+        3
         >>> global_frame.lookup("foo")
-        377055b6dcfd7e506af592ae723fa0cb
-        # locked
+        SchemeError
         # choice: None
         # choice: SchemeError
         # choice: 3
@@ -29,20 +25,17 @@ test = {
         'type': 'doctest'
       },
       {
-        'locked': True,
         'test': r"""
         >>> first_frame = create_global_frame()
         >>> first_frame.define("x", 3)
         >>> second_frame = Frame(first_frame)
         >>> second_frame.parent
-        14587441a61d983705847f2886e98c62
-        # locked
+        first_frame
         # choice: None
         # choice: first_frame
         # choice: second_frame
         >>> second_frame.lookup("x")
-        0c31fd9672da616fabf24f1c95cc313f
-        # locked
+        3
         """,
         'type': 'doctest'
       }

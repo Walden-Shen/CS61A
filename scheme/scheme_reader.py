@@ -135,6 +135,7 @@ def scheme_read(src):
         return val
     elif val == "'":
         "*** YOUR CODE HERE ***"
+        return Pair('quote', Pair(scheme_read(src), nil))
     elif val == "(":
         return read_tail(src)
     else:
@@ -168,6 +169,11 @@ def read_tail(src):
             return nil
         elif src.current() == ".":
             "*** YOUR CODE HERE ***"
+            src.pop()
+            rest = scheme_read(src)
+            if src.pop() == ")":
+                return rest
+            raise SyntaxError("Expected one element after .")
         else:
             first = scheme_read(src)
             rest = read_tail(src)

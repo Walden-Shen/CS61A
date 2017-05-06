@@ -27,32 +27,27 @@ test = {
         'type': 'doctest'
       },
       {
-        'locked': True,
         'test': r"""
         >>> read_line("'x")
-        39fe81be80f506d555ca9800d1d78f9d
-        # locked
+        Pair('quote', Pair('x', nil))
         # choice: Pair('x', nil)
         # choice: 'x'
         # choice: Pair('quote', 'x')
         # choice: Pair('quote', Pair('x', nil))
         >>> read_line("(quote x)")
-        39fe81be80f506d555ca9800d1d78f9d
-        # locked
+        Pair('quote', Pair('x', nil))
         # choice: Pair('quote', 'x')
         # choice: Pair('x', nil)
         # choice: 'x'
         # choice: Pair('quote', Pair('x', nil))
         >>> read_line("'(a b)")
-        0b8ff81c0ca764b4f0fbf5ac57b27c84
-        # locked
+        Pair('quote', Pair(Pair('a', Pair('b', nil)), nil))
         # choice: Pair('a', Pair('b', nil))
         # choice: Pair('quote', Pair(Pair('a', Pair('b', nil)), nil))
         # choice: Pair('quote', Pair('a', 'b'))
         # choice: Pair('quote', Pair('a', Pair('b', nil)))
         >>> read_line("'((a))")
-        06c0a00e3a7367a6e3df2414156d09cc
-        # locked
+        Pair('quote', Pair(Pair(Pair('a', nil), nil), nil))
         # choice: Pair('quote', Pair(Pair('a', nil), nil))
         # choice: Pair('quote', Pair(Pair('a', nil), nil), nil)
         # choice: Pair('quote', Pair(Pair('a'), nil))
