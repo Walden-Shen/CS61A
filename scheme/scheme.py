@@ -60,6 +60,8 @@ def scheme_apply(procedure, args, env):
         return apply_primitive(procedure, args, env)
     elif isinstance(procedure, LambdaProcedure):
         "*** YOUR CODE HERE ***"
+        frame = env.make_call_frame(procedure.formals, args)
+        return scheme_eval(procedure.body, frame)
     elif isinstance(procedure, MuProcedure):
         "*** YOUR CODE HERE ***"
     else:
@@ -134,7 +136,11 @@ class Frame:
         """
         frame = Frame(self)
         "*** YOUR CODE HERE ***"
-        return frame
+        if len(formals) == len(vals):
+            for formal, val in zip(formals, vals):
+                frame.bindings[formal] = val
+            return frame
+        raise SchemeError
 
     def define(self, sym, val):
         """Define Scheme symbol SYM to have value VAL in SELF."""
@@ -198,6 +204,10 @@ def do_lambda_form(vals, env):
     formals = vals[0]
     check_formals(formals)
     "*** YOUR CODE HERE ***"
+    if len(vals) > 2:
+        return LambdaProcedure(formals, Pair("begin", vals.second), env)
+    else:
+        return LambdaProcedure(formals, vals.second.first, env)
 
 def do_mu_form(vals):
     """Evaluate a mu form with parameters VALS."""
@@ -215,8 +225,10 @@ def do_define_form(vals, env):
         "*** YOUR CODE HERE ***"
         env.bindings[target] = scheme_eval(vals[1], env)
         return target
-    elif isinstance(target, Pair):
-        "*** YOUR CODE HERE ***"
+    elif isinstance(target, Pair) and scheme_symbolp(target.first):
+        answer = Pair(target.second, vals.second)
+        env.bindings[target.first] = do_lambda_form(answer, env)
+        return target.first
     else:
         raise SchemeError("bad argument to define")
 
@@ -224,7 +236,7 @@ def do_quote_form(vals):
     """Evaluate a quote form with parameters VALS."""
     check_form(vals, 1, 1)
     "*** YOUR CODE HERE ***"
-
+    return vals.first
 
 def do_let_form(vals, env):
     """Evaluate a let form with parameters VALS in environment ENV."""
@@ -295,6 +307,10 @@ def do_begin_form(vals, env):
     """Evaluate begin form with parameters VALS in environment ENV."""
     check_form(vals, 1)
     "*** YOUR CODE HERE ***"
+    while vals.second is not nil:
+        scheme_eval(vals.first, env)
+        vals = vals.second
+    return vals.first
 
 LOGIC_FORMS = {
         "and": do_and_form,
@@ -326,6 +342,15 @@ def check_formals(formals):
     >>> check_formals(read_line("(a b c)"))
     """
     "*** YOUR CODE HERE ***"
+    length = len(formals)
+    tempset = set()
+    for i in range(len(formals)):
+        if not scheme_symbolp(formals[i]):
+            raise SchemeError
+        tempset.add(formals[i])
+    if len(tempset) != length:
+        raise SchemeError
+
 
 ##################
 # Tail Recursion #
