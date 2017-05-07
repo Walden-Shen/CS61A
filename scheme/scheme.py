@@ -60,7 +60,7 @@ def scheme_apply(procedure, args, env):
         return apply_primitive(procedure, args, env)
     elif isinstance(procedure, LambdaProcedure):
         "*** YOUR CODE HERE ***"
-        frame = env.make_call_frame(procedure.formals, args)
+        frame = procedure.env.make_call_frame(procedure.formals, args)
         return scheme_eval(procedure.body, frame)
     elif isinstance(procedure, MuProcedure):
         "*** YOUR CODE HERE ***"
@@ -137,8 +137,8 @@ class Frame:
         frame = Frame(self)
         "*** YOUR CODE HERE ***"
         if len(formals) == len(vals):
-            for formal, val in zip(formals, vals):
-                frame.bindings[formal] = val
+            for i in range(len(formals)):
+                frame.define(formals[i], vals[i])
             return frame
         raise SchemeError
 
@@ -249,6 +249,11 @@ def do_let_form(vals, env):
     # Add a frame containing bindings
     names, values = nil, nil
     "*** YOUR CODE HERE ***"
+    for binding in bindings:
+        if len(binding) is not 2 or not scheme_symbolp(binding[0]):
+            raise SchemeError
+        names = Pair(binding[0], names)
+        values = Pair(scheme_eval(binding[1], env), values)
     new_env = env.make_call_frame(names, values)
 
     # Evaluate all but the last expression after bindings, and return the last
@@ -266,10 +271,23 @@ def do_if_form(vals, env):
     """Evaluate if form with parameters VALS in environment ENV."""
     check_form(vals, 2, 3)
     "*** YOUR CODE HERE ***"
+    if scheme_true(vals.first):
+        return vals[1]
+    elif len(vals) == 3:
+        return vals[2]
+    else:
+        return okay
+
 
 def do_and_form(vals, env):
     """Evaluate short-circuited and with parameters VALS in environment ENV."""
     "*** YOUR CODE HERE ***"
+    for i in range(len(vals) - 1):
+        if scheme_false(scheme_eval(vals[i], env)):
+            return False
+    if len(vals) > 0:
+        return vals[len(vals) - 1]
+    return True
 
 def quote(value):
     """Return a Scheme expression quoting the Scheme VALUE.
@@ -285,6 +303,10 @@ def quote(value):
 def do_or_form(vals, env):
     """Evaluate short-circuited or with parameters VALS in environment ENV."""
     "*** YOUR CODE HERE ***"
+    for val in vals:
+        if scheme_true(val):
+            return val
+    return False
 
 def do_cond_form(vals, env):
     """Evaluate cond form with parameters VALS in environment ENV."""
@@ -301,6 +323,12 @@ def do_cond_form(vals, env):
             test = scheme_eval(clause.first, env)
         if scheme_true(test):
             "*** YOUR CODE HERE ***"
+            if clause.second is not nil:
+                expr = clause.second
+                if expr.second is not nil:
+                    return Pair("begin", expr)
+                return expr.first
+            return test
     return okay
 
 def do_begin_form(vals, env):
