@@ -48,9 +48,11 @@
 ;; be at most MAX-VALUE and there are at most MAX-PIECES partitions.
 (define (list-partitions total max-pieces max-value)
   'YOUR-CODE-HERE
-  ;(list (cons (caar pairs) (cons (zip (cdr pairs)))) (cons (cadr pairs) (cons (zip (cdr pairs)))))
-  )
-
+)
+(define (divider total max-pieces max-value)
+  (cond ((or (<= max-pieces 0) (<= total 0) (<= max-value 0)) (cons nil (cons nil nil)))
+   		(else (cons (cons max-value (divider (- total max-value) (- max-pieces 1) max-value)) (cons (cons (divider total max-pieces (- max-value 1)) nil) nil)))
+  ))
 (list-partitions 5 2 4)
 ; expects a permutation of ((4 1) (3 2))
 (list-partitions 7 3 5)
