@@ -26,7 +26,13 @@
 ; Problem 18
 ;; Turns a list of pairs into a pair of lists
 (define (zip pairs)
-  'YOUR-CODE-HERE
+;  (if (null? pairs)
+;   		(list (list) (list))
+;   		(begin (define s (zip (cdr pairs)))
+;		 (cons (cons (caar pairs) (car s)) (cons (cons (cadar pairs)) (cadr s)) nil)))
+  (cond ((null? pairs) (cons nil (cons nil nil))) 
+		 (else (cons (cons (caar pairs) (car (zip (cdr pairs)))) (cons (cons (cadar pairs) (cadr (zip (cdr pairs)))) nil)))
+		 )
   )
 
 (zip '())
@@ -42,6 +48,7 @@
 ;; be at most MAX-VALUE and there are at most MAX-PIECES partitions.
 (define (list-partitions total max-pieces max-value)
   'YOUR-CODE-HERE
+  ;(list (cons (caar pairs) (cons (zip (cdr pairs)))) (cons (cadr pairs) (cons (zip (cdr pairs)))))
   )
 
 (list-partitions 5 2 4)
