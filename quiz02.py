@@ -168,16 +168,16 @@ class ChangeMachine:
     def change(self, coin):
         """Return change for coin, removing the result from self.coins."""
         "*** YOUR CODE HERE ***"
-        if self.coins[coin] > 0:
+        if coin in self.coins:
             self.coins[coin] += 1
         else:
             self.coins[coin] = 1
         changes = make_change(coin, self.coins)
         for change in changes:
-            if self.coins[coin] == 1:
-                del self.coins[coin]
+            if self.coins[change] == 1:
+                del self.coins[change]
             else:
-                self.coins[coin] -= 1
+                self.coins[change] -= 1
         return changes
 
 
