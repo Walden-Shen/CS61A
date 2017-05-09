@@ -723,3 +723,58 @@ def average_tree(t):
     >>> average_tree(t)
     3
     """
+"""
+15.iterator
+"""
+class Range:
+    def __init__(self, start, end):
+        self.start = start
+        self.end = end
+
+    def __len__(self):
+        return max(self.end - self.start, 0)
+
+    def __getitem__(self, k):
+        if self.start + k >= self.end:
+            raise IndexError
+        return self.start + k
+
+class RangeIter:
+    def __init__(self, start, end):
+        self.next = start
+        self.end = end
+    
+    def __next__(self):
+        if self.next >= self.end:
+            raise StopIteration
+        result = self.next
+        self.next += 1
+        return result
+class Letters:
+    def __init__(self, start, end):
+        self.start = start
+        self.end = end
+
+    def __iter__(self):
+        return LetterIter(self.start, self.ent)
+
+class LetterIter:
+    def __init__(self, start, end):
+        self.next_letter = start
+        self.end = end
+    
+    def __next__(self):
+        if self.next_letter >= self.end:
+            raise StopIteration
+        result = self.next_letter
+        self.next_letter = chr(ord(self.next_letter) + 1)
+        return result
+    
+def letter_generator(next_letter, end):
+    while next_letter < end:
+        yield next_letter
+        next_letter = chr(ord(next_letter) + 1)
+#the map (built in function) is lazy.'map(function, iterable things)', you would
+#receive a map object and only next(that object) can cast the function to the
+#iterable thing. BTW list(that object) can list all the things after the function
+
