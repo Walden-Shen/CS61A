@@ -777,4 +777,42 @@ def letter_generator(next_letter, end):
 #the map (built in function) is lazy.'map(function, iterable things)', you would
 #receive a map object and only next(that object) can cast the function to the
 #iterable thing. BTW list(that object) can list all the things after the function
+"""
+16.hide data
+"""
+#the '_' has nothing useful but to inform other people not to directly refer to that 
+class FibIter:
+    def __init__(self):
+        self._next = 0
+        self._addend = 1
 
+    def __next__(self):
+        result = self._next
+        self._addend, self._next = self._next, self._addend + self._next
+        return result
+#'singleton class' is a class that only ever has one instance. you can rebind
+#the class name to the instance :i.e. FibIter = FibIter(), then the class is
+#rided
+"""
+17.Stream
+"""
+class Stream:
+    class empty:
+        def __repr__(self):
+            return 'Stream.empty'
+    empty = empty()
+
+    def __init__(self, first, compute_rest = lambda: Stream.empty):
+        assert callable(compute_rest)
+        self.first = first
+        self._compute_rest = compute_rest
+
+    @property
+    def rest(self):
+        if self._compute_rest is not None:
+            self._rest = self._compute_rest()
+            self._compute_rest = None
+        return self._rest
+
+def bab(a, x = 1):
+    return Stream(x, lambda: bab(a, (x + a / x) / 2))
