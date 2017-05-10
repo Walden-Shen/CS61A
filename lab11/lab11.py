@@ -24,12 +24,22 @@ class IteratorRestart:
     """
     def __init__(self, start, end):
         "*** YOUR CODE HERE ***"
+        self.start = start
+        self.now = start
+        self.end = end
 
     def __next__(self):
         "*** YOUR CODE HERE ***"
+        if self.now > self.end:
+            raise StopIteration
+        self.now += 1
+        return self.now - 1
+        
 
     def __iter__(self):
         "*** YOUR CODE HERE ***"
+        self.now = self.start
+        return self
 
 ##############
 # Generators #
@@ -48,6 +58,9 @@ def countdown(n):
     0
     """
     "*** YOUR CODE HERE ***"
+    while n >= 0:
+        yield n
+        n -= 1
 
 class Countdown:
     """
@@ -62,6 +75,14 @@ class Countdown:
     0
     """
     "*** YOUR CODE HERE ***"
+    def __init__(self, n):
+        self.count = n
+
+
+    def __iter__(self):
+        while self.count >= 0:
+            yield self.count
+            self.count -= 1
 
 def hailstone(n):
     """
@@ -77,4 +98,10 @@ def hailstone(n):
     1
     """
     "*** YOUR CODE HERE ***"
-
+    yield (int)(n)
+    while n != 1:
+        if n % 2:
+            n = 3 * n + 1
+        else:
+            n /= 2
+        yield (int)(n)
