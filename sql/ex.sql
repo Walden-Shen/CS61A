@@ -98,3 +98,39 @@ create table fibs as
 			where current < 14
 		)
 	select previous as n from fib;
+
+/*
+--4 not interesting number
+*/
+create table pairs as
+	with i(n) as (
+		select 1 union
+		select n + 1 from i where n < 50
+	)
+	select a.n as x, b.n as y from i as a, i as b where a.n <= b.n;
+
+with
+	cubes(x, y, cube) as (
+		select x, y, x * x * x + y * y * y from pairs
+	)
+select first.x, first.y, second.x, second.y, first.cube
+from cubes as first, cubes as second
+where first.cube = second.cube and first.x < second.x
+order by first.cube;
+
+/*
+--5.aggregation
+*/
+create table animals as
+select "dog" as kind, 4 as legs, 20 as weight union
+select "frog"		, 8		   , 20			  union
+select "cat"		, 4		   , 10           union
+select "parrot"		, 2		   , 5			  union
+select "t-rex"		, 2		   , 12000;
+
+select sum(weight), max(legs - weight), min(weight), avg(weight) from animals;
+select legs, max(weight) from animals group by legs;
+select count(*) from animals;
+select count(distinct legs) from animals;
+select weight / legs, count(*) from animals group by weight / legs having count(*) > 1;
+select max(legs) - min(legs) from animals group by weight;
