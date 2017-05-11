@@ -29,26 +29,36 @@ create table sizes as
 
 -- The size of each dog
 create table size_of_dogs as
-select "REPLACE THIS LINE WITH YOUR SOLUTION";
+select name, size from dogs, sizes where min <= height and height <= max;
 
 
 -- All dogs with parents ordered by decreasing height of their parent
 create table by_height as
-select "REPLACE THIS LINE WITH YOUR SOLUTION";
+select child from dogs as a, dogs as b, parents where child = a.name and b.name = parent order by b.height desc;
 
 
 -- Sentences about siblings that are the same size
 create table sentences as
-select "REPLACE THIS LINE WITH YOUR SOLUTION";
-
+with siblings(a, b) as (
+	select dogsa.child as a, dogsb.child as b 
+	from parents as dogsa, parents as dogsb 
+	where dogsa.parent = dogsb.parent and dogsa.child <> dogsb.child and dogsa.child < dogsb.child
+	)
+select a || " and " || b || " are " || first.size || " siblings" from siblings, size_of_dogs as first, size_of_dogs as second
+	where first.name = a and second.name = b and first.size = second.size;
 
 -- Ways to stack 4 dogs to a height of at least 170, ordered by total height
 create table stacks as
-select "REPLACE THIS LINE WITH YOUR SOLUTION";
-
+	select first.name || ", " || second.name || ", " || third.name || ", " || fourth.name, first.height + second.height + third.height + fourth.height
+	from dogs as first, dogs as second, dogs as third, dogs as fourth
+	where first.name > second.name and second.name > third.name and third.name > fourth.name and first.height + second.height + third.height + fourth.height >= 170
+	order by first.height + second.height + third.height + fourth.height asc;
 
 create table tallest as
-select "REPLACE THIS LINE WITH YOUR SOLUTION";
+with tall(h, n) as (
+	select 
+	from by_height, tall where 
+select ;
 
 
 -- All non-parent relations ordered by height difference
