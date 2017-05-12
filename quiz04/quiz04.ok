@@ -1,0 +1,18 @@
+{
+    "name": "Quiz 4",
+    "endpoint": "cal/CS61A/sp15/quiz4",
+    "src": [
+        "quiz04.sql"
+    ],
+    "tests": {
+        "tests/open.py": "ok_test",
+        "tests/allowed.py": "ok_test",
+        "tests/full.py": "ok_test"
+    },
+    "protocols": [
+        "file_contents",
+        "unlock",
+        "grading",
+        "analytics"
+    ]
+}
