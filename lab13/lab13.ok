@@ -1,0 +1,20 @@
+{
+    "name": "Lab 13",
+    "endpoint": "cal/CS61A/sp15/lab13",
+    "src": [
+        "lab13.sql"
+    ],
+    "tests": {
+        "tests/generate_table.py": "ok_test",
+        "tests/masculine.py": "ok_test",
+        "tests/word_cat_count.py": "ok_test",
+        "tests/noun_verbs.py": "ok_test",
+        "tests/likeliest_child.py": "ok_test"
+    },
+    "protocols": [
+        "file_contents",
+        "unlock",
+        "grading",
+        "analytics"
+    ]
+}
