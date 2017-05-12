@@ -25,8 +25,7 @@ create table locations as
 
 -- Locations without a cafe
 create table open_locations as
-  select "REPLACE THIS LINE WITH YOUR SOLUTION";
-
+  select n from cafes, locations group by n having (min(abs(n - location))) > 0;
 -- select * from open_locations where n >= 5;
 -- Expected output:
 --   5
@@ -39,7 +38,7 @@ create table allowed as
   with item_locations(item, location) as (
     select item, location from cafes, menus where name = cafe
   )
-  select "REPLACE THIS LINE WITH YOUR SOLUTION";
+  select n, item from locations, item_locations group by n, item having (min(abs(n - location))) > 2;
 
 -- select * from allowed where n >= 5;
 -- Expected output:
