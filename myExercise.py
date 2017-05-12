@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """
 1.using function as argument
 """
@@ -816,3 +817,61 @@ class Stream:
 
 def bab(a, x = 1):
     return Stream(x, lambda: bab(a, (x + a / x) / 2))
+
+"""
+18.nlp
+"""
+class nlpTree:
+    def __init__(self, tag, branches):
+        assert len(branches) >= 1
+        for b in branches:
+            assert isinstance(b, (nlpTree, nlpLeaf))
+        self.tag = tag
+        self.branches = branches
+
+class nlpLeaf:
+    def __init__(self, tag, word):
+        self.tag = tag
+        self.word = word
+
+cows = nlpLeaf('N', 'cows')
+intimidate = nlpLeaf('V', 'intimidate')
+S, NP, VP = 'S', 'NP', 'VP'
+
+s = nlpTree(S, [nlpTree(NP, [cows]), nlpTree(VP, [intimidate, nlpTree(NP,
+    [cows])])])
+
+lexicon = {
+        nlpLeaf('N', 'cows'),
+        nlpLeaf('V', 'intimidate'),
+        }
+grammar = {
+        'S': [['NP', 'VP']].
+        'NP': [['N']],
+        'VP': [['V', 'NP']]
+        }
+def parse(line):
+    words = lines.split()
+    def expand(start, end, tag):
+        if end - start == 1:
+            word = words[start]
+            for leaf in lexicon:
+                if leaf.tag == tag and leaf.word = word:
+                    yield leaf
+        if tag in grammar:
+            for tags in grammar[tag]:
+                for branches in expand_all(start, end, tags):
+                    yield nlpTree(tag, branches)
+
+    def expand_all(start, end, tags):
+        if len(tags) == 1:
+            for branch in expand(start, end, tags[0]):
+                yield [branch]
+        else:
+            first, rest = tags[0], tags[1:]
+            for middle in range(start + 1, end + 1 - len(rest)):
+                for first_branch in expand(start, middle, first):
+                    for rest_branches in expand_all(middle, end, rest):
+                        yield [first_branch] + rest_branches
+    for tree in expand(0, len(words), 'S'):
+        #print tree (tree)
