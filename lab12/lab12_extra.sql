@@ -21,8 +21,10 @@ create table inland_distances as
   with
     inland(start, end, hops) as (
       -- REPLACE THIS LINE
-      	select s1, s2, 1 from adjacencies, landlocked as a, landlocked as b where a.state = s1 and b.state = s2 union
-		select start, s2, hops + 1 from inland, adjacencies, landlocked where s1 = end and s2 = state and hops < 10
-    )
+      	select state, state, 0 from landlocked union
+		select start, s2, hops + 1 from inland, adjacencies, landlocked where s1 = end and s2 = state and hops < 8
+	)
   -- REPLACE THIS LINE
-select start as start, end as end, hops as hops from inland;
+select s1 as start, s2 as end, 2 as hops from adjacencies union
+select start.s1 as start, end.s2 as end, hops + 2 as hops
+from adjacencies as start, adjacencies as end, inland where start.s2 = start and end.s1 = end;
