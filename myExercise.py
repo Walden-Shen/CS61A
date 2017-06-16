@@ -863,15 +863,15 @@ def parse(line):
                 for branches in expand_all(start, end, tags):
                     yield nlpTree(tag, branches)
 
-    def expand_all(start, end, tags):
-        if len(tags) == 1:
-            for branch in expand(start, end, tags[0]):
-                yield [branch]
-        else:
-            first, rest = tags[0], tags[1:]
-            for middle in range(start + 1, end + 1 - len(rest)):
-                for first_branch in expand(start, middle, first):
-                    for rest_branches in expand_all(middle, end, rest):
-                        yield [first_branch] + rest_branches
-    for tree in expand(0, len(words), 'S'):
-        #print tree (tree)
+def expand_all(start, end, tags):
+    if len(tags) == 1:
+        for branch in expand(start, end, tags[0]):
+            yield [branch]
+    else:
+        first, rest = tags[0], tags[1:]
+        for middle in range(start + 1, end + 1 - len(rest)):
+            for first_branch in expand(start, middle, first):
+                for rest_branches in expand_all(middle, end, rest):
+                    yield [first_branch] + rest_branches
+for tree in expand(0, len(words), 'S'):
+    #print tree (tree)
